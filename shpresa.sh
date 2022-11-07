@@ -11,7 +11,10 @@ USERNAMEFILE=resources/data/username.file
 
 #Show menu
 ##Whats the date?
-##
+##Whats the weather?
+##Lyrics to song
+###Select song
+##General info
 
 
 
