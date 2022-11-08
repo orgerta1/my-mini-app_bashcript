@@ -1,27 +1,78 @@
 #!/bin/bash
 
-USERNAMEFILE=resources/data/username.file
+USERNAME_FILENAME="username.file"
+JOKES_SCRIPT_PATH="resources/jokes/jokes.sh"
+WEATHER_SCRIPT_PATH="resources/weather/weather.sh"
 
-#Chek if file exists
-##If "no", ask user for his name and store it into the given file path 
+USERNAME=$(<$USERNAME_FILENAME)
 
-#Read the USERNAMEFILE content and save it into a variable
+if [ -z $USERNAME ]
+then
+	echo "Application is not installed. Exiting..."
+	sleep 0.8
+	exit 0
+fi
 
-#Say Hi <username>, welcome to Shpresa
+echo "Hello there $USERNAME"
 
-#Show menu
-##Whats the date?
-##Whats the weather?
-##Lyrics to song
-###Select song
-##General info
+#Functions
+function displayMenu () {
+	declare -a menuItems=( 'Show me the weather for next week!' 'Tell me a joke!' 'Show me the date!' 'Show me song lyrics!' 'Exit' )
 
+	COUNTER=1
+	for ((i=0; i < ${#menuItems[@]}; i++))
+	do
+		echo "($COUNTER) ${menuItems[$i]}"
+		((COUNTER++))
+	done
+}
 
+function checkAndExecScript () {
+	FILEPATH=$1
+	if ! [ -f $FILEPATH ]
+        then
+                echo "$FILEPATH does not exist"
+        elif ! [ -x $FILEPATH ]
+        then
+                echo "You do not have the permission to execute $FILEPATH"
+        else
+                source $FILEPATH
+        fi
+}
+#
 
-#weather info https://open-meteo.com/en/docs#latitude=41.34&longitude=19.82&daily=weathercode&timezone=Europe%2FBerlin
+#Logic
+while true
+do
+	echo ""
+	echo "*********************************"
+	echo "How can I help you today?"
+        
+	displayMenu
+	
+        read -p "Choose an option: " OPTION
+	echo "*********************************"
+	echo ""
 
-#jq sudo apt-get install jq
-
-
-
-
+        case "$OPTION" in
+	"1")
+		sleep 0.8
+		checkAndExecScript $WEATHER_SCRIPT_PATH
+		;;
+	"2")
+		sleep 0.8
+		checkAndExecScript $JOKES_SCRIPT_PATH
+		;;
+	"3")
+		sleep 0.8
+		echo "Today's date is $(date)"
+		;;
+        "5")
+		sleep 0.8
+                echo "Exiting, goodbye $USERNAME!"
+                exit 0;;
+	*)  
+		sleep 0.8
+            	echo "Please input a correct value!"
+        esac
+done
